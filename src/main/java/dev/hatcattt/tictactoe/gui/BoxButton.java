@@ -1,7 +1,12 @@
 package dev.hatcattt.tictactoe.gui;
 
+import dev.hatcattt.tictactoe.main.Board;
+import dev.hatcattt.tictactoe.main.BoardStatus;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Class used as a button and extend the JButton class.
@@ -9,6 +14,8 @@ import java.awt.*;
 public class BoxButton extends JButton {
     private String fullName;
     private String shortName;
+
+    private LabelStatus labelStatus;
 
     /**
      * Init a BoxButton with no argument (base JButton) with the name "Button".
@@ -50,4 +57,5 @@ public class BoxButton extends JButton {
     public String getShortName() {
         return shortName;
     }
+
 }

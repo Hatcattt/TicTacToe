@@ -5,7 +5,7 @@ package dev.hatcattt.tictactoe.gui;
  */
 public class PlayerLetters {
     private static final String[] LETTERS = new String[] {"X", "O"};
-    private String currentLetter = LETTERS[index];
+    private final String currentLetter = LETTERS[index];
     private static int index = 1;
 
     /**

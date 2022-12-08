@@ -34,7 +34,7 @@ public class CheckOnExit extends WindowAdapter {
         if (clickButton == JOptionPane.YES_OPTION) {
             jFrame.dispose();
 //            LOGGER.log(Level.INFO, "The JFrame have been disposed.");
-        } else {
+//        } else {
 //            LOGGER.log(Level.INFO, "Someone tried to close the windows.");
         }
     }
