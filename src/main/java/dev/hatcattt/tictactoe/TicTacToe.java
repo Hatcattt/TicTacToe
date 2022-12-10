@@ -1,11 +1,12 @@
 package dev.hatcattt.tictactoe;
 
+import dev.hatcattt.tictactoe.gui.TButton;
+import dev.hatcattt.tictactoe.gui.CheckOnExit;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import static dev.hatcattt.tictactoe.TicTacToe.MAX_BOARD_SIZE;
 
 /**
  * Class used to initialise the main JFrame component.
@@ -16,18 +17,21 @@ public class TicTacToe extends JFrame {
     private final static String PLAYER_1 = "X";
     private final static String PLAYER_2 = "O";
     private static String currentPlayer;
-    private final static JLabel labelStatus = new JLabel(BoardStatus.NO_ACTIVE.getText());
+    private static final JLabel LABEL_STATUS = new JLabel(BoardStatus.NO_ACTIVE.getText());
     private static final List<JButton> CELLS = new ArrayList<>();
+    private static final Font BUTTON_CELL_FONT = new Font(Font.SANS_SERIF, Font.BOLD, 80);
 
     public TicTacToe() {
         super("Tic Tac Toe");
-        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
         this.setSize(450, 450);
         this.setLocationRelativeTo(null);
         this.setResizable(false);
         this.setLayout(new BorderLayout());
-        labelStatus.setName("LabelStatus");
+        this.addWindowListener(new CheckOnExit(this));
+
+        LABEL_STATUS.setName("LabelStatus");
         currentPlayer = PLAYER_1;
 
         // - Main game board -----------------------------------------
@@ -35,13 +39,13 @@ public class TicTacToe extends JFrame {
         board.setLayout(new GridLayout(MAX_BOARD_SIZE, MAX_BOARD_SIZE));
 
         for (int i = MAX_BOARD_SIZE; i >= 1; i--) {
-            CELLS.add(new BoxButton("A" + i));
-            CELLS.add(new BoxButton("B" + i));
-            CELLS.add(new BoxButton("C" + i));
+            CELLS.add(new TButton("A" + i));
+            CELLS.add(new TButton("B" + i));
+            CELLS.add(new TButton("C" + i));
         }
         CELLS.forEach(C -> {
             C.setText(EMPTY_STRING);
-            C.setFocusPainted(false);
+            C.setFont(BUTTON_CELL_FONT);
             C.addActionListener(event -> checkIfTheGameIsDone(C.getText()));
             C.addActionListener(event -> displayStatusByState());
             C.addActionListener(event -> drawAPlayerLetter(C));
@@ -51,17 +55,17 @@ public class TicTacToe extends JFrame {
         this.add(board);
 
         // - Footer ---------------------------------------------
-        JButton buttonReset = new JButton("Reset");
-        buttonReset.setName("ButtonReset");
-        buttonReset.addActionListener(event -> resetTheGame());
+        TButton TButtonReset = new TButton("Reset");
+        TButtonReset.setText("Reset");
+        TButtonReset.addActionListener(event -> resetTheGame());
 
         JPanel footerBox = new JPanel();
         footerBox.setLayout(new BoxLayout(footerBox, BoxLayout.LINE_AXIS));
         footerBox.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
 
-        footerBox.add(labelStatus);
+        footerBox.add(LABEL_STATUS);
         footerBox.add(Box.createVerticalStrut(0));
-        footerBox.add(buttonReset);
+        footerBox.add(TButtonReset);
 
         this.add(footerBox, BorderLayout.SOUTH);
         this.setVisible(true);
@@ -109,9 +113,9 @@ public class TicTacToe extends JFrame {
      */
     private static void displayStatusByState() {
         switch (getNumberOfCellPlayed()) {
-            case 0 -> labelStatus.setText(BoardStatus.NO_ACTIVE.getText());
-            case 1 -> labelStatus.setText(BoardStatus.ACTIVE.getText());
-            case (MAX_BOARD_SIZE * MAX_BOARD_SIZE) -> labelStatus.setText(BoardStatus.NO_WINNER.getText());
+            case 0 -> LABEL_STATUS.setText(BoardStatus.NO_ACTIVE.getText());
+            case 1 -> LABEL_STATUS.setText(BoardStatus.ACTIVE.getText());
+            case (MAX_BOARD_SIZE * MAX_BOARD_SIZE) -> LABEL_STATUS.setText(BoardStatus.NO_WINNER.getText());
         }
     }
 
@@ -134,7 +138,7 @@ public class TicTacToe extends JFrame {
             cell.setEnabled(true);
         }
         currentPlayer = PLAYER_1;
-        labelStatus.setText(BoardStatus.NO_ACTIVE.getText());
+        LABEL_STATUS.setText(BoardStatus.NO_ACTIVE.getText());
         JOptionPane.showMessageDialog(null, "The game have been reset!");
     }
 
@@ -144,84 +148,9 @@ public class TicTacToe extends JFrame {
      */
     private static void setStatusByPlayerLetter(String playerLetter) {
         if (playerLetter.equals(PLAYER_1)) {
-            labelStatus.setText(BoardStatus.X_WIN.getText());
+            LABEL_STATUS.setText(BoardStatus.X_WIN.getText());
         } else if (playerLetter.equals(PLAYER_2)) {
-            labelStatus.setText(BoardStatus.O_WIN.getText());
+            LABEL_STATUS.setText(BoardStatus.O_WIN.getText());
         }
-    }
-}
-
-/**
- * Represent the status of the game in real time.
- */
-enum BoardStatus {
-
-    ACTIVE("Game in progress"),
-    NO_ACTIVE("Game is not started"),
-
-    X_WIN("X wins"),
-    O_WIN("O wins"),
-    NO_WINNER("Draw");
-
-    private final String textStatus;
-
-    BoardStatus(String textLabel) {
-        this.textStatus = textLabel;
-    }
-
-    public String getText() {
-        return textStatus;
-    }
-}
-
-/**
- * Represent a button with a name.
- */
-class BoxButton extends JButton {
-    public BoxButton(String shortName) {
-        if (shortName != null) {
-            String fullName = (shortName.isEmpty() ? "Button" : "Button" + shortName);
-            super.setName(fullName);
-            setFont(new Font(Font.SANS_SERIF, Font.BOLD, 80));
-        }
-    }
-}
-
-/**
- * Have methods for verifying if a game is finish.
- */
-interface IGameWin {
-    static boolean isAVerticalWin(List<JButton> jButtonList, String playerLetter) {
-        for (int i = 0, y = MAX_BOARD_SIZE; i < y; i++) {
-            if (jButtonList.get(i).getText().equals(playerLetter) &&
-                    jButtonList.get(i + y).getText().equals(playerLetter) &&
-                    jButtonList.get(i + y + y).getText().equals(playerLetter)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    static boolean isAHorizontalWin(List<JButton> jButtonList, String playerLetter) {
-        for (int i = 0, y = MAX_BOARD_SIZE * MAX_BOARD_SIZE; i < y; i+=MAX_BOARD_SIZE) {
-            if (jButtonList.get(i).getText().equals(playerLetter) &&
-                    jButtonList.get(i + 1).getText().equals(playerLetter) &&
-                    jButtonList.get(i + 2).getText().equals(playerLetter)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    static boolean isADiagonalWin(List<JButton> jButtonList, String playerLetter) {
-        if (jButtonList.get(MAX_BOARD_SIZE + 1).getText().equals(playerLetter)) {
-            for (int i = 0, y = jButtonList.size() - 1, loop = 2; loop > 0; loop--, i+=6, y-=6) {
-                if (jButtonList.get(i).getText().equals(playerLetter) &&
-                        jButtonList.get(y).getText().equals(playerLetter)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 }
