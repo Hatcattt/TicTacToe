@@ -5,21 +5,15 @@ import dev.hatcattt.tictactoe.gui.CheckOnExit;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Class used to initialise the main JFrame component.
  */
-public class TicTacToe extends JFrame {
-    public final static int MAX_BOARD_SIZE = 3;
-    private final static String EMPTY_STRING = " ";
-    private final static String PLAYER_1 = "X";
-    private final static String PLAYER_2 = "O";
-    private static String currentPlayer;
-    private static final JLabel LABEL_STATUS = new JLabel(BoardStatus.NO_ACTIVE.getText());
-    private static final List<JButton> CELLS = new ArrayList<>();
-    private static final Font BUTTON_CELL_FONT = new Font(Font.SANS_SERIF, Font.BOLD, 80);
+public class TicTacToe extends JFrame implements GameConstants {
+    static String currentPlayer;
+    static final JLabel LABEL_STATUS = new JLabel(BoardStatus.NO_ACTIVE.getText());
+    static final TButton[][] CELLS = new TButton[BOARD_SIZE][BOARD_SIZE];
+    final static JPanel BOARD = new JPanel();
 
     public TicTacToe() {
         super("Tic Tac Toe");
@@ -35,24 +29,10 @@ public class TicTacToe extends JFrame {
         currentPlayer = PLAYER_1;
 
         // - Main game board -----------------------------------------
-        JPanel board = new JPanel();
-        board.setLayout(new GridLayout(MAX_BOARD_SIZE, MAX_BOARD_SIZE));
+        BOARD.setLayout(new GridLayout(BOARD_SIZE, BOARD_SIZE));
+        initAllButtons();
 
-        for (int i = MAX_BOARD_SIZE; i >= 1; i--) {
-            CELLS.add(new TButton("A" + i));
-            CELLS.add(new TButton("B" + i));
-            CELLS.add(new TButton("C" + i));
-        }
-        CELLS.forEach(C -> {
-            C.setText(EMPTY_STRING);
-            C.setFont(BUTTON_CELL_FONT);
-            C.addActionListener(event -> checkIfTheGameIsDone(C.getText()));
-            C.addActionListener(event -> displayStatusByState());
-            C.addActionListener(event -> drawAPlayerLetter(C));
-        });
-
-        CELLS.forEach(board::add);
-        this.add(board);
+        this.add(BOARD);
 
         // - Footer ---------------------------------------------
         TButton TButtonReset = new TButton("Reset");
@@ -72,17 +52,43 @@ public class TicTacToe extends JFrame {
     }
 
     /**
-     * Check if the player have a specific position to win the game.
-     * If it does, all button in the cell are disabled.
-     * @param currentPlayer the player to verifying his position
+     * Init all the buttons presents in the cells.
      */
-    private static void checkIfTheGameIsDone(String currentPlayer) {
-        if (IGameWin.isAVerticalWin(CELLS, currentPlayer)
-                || IGameWin.isAHorizontalWin(CELLS, currentPlayer)
-                || IGameWin.isADiagonalWin(CELLS, currentPlayer)) {
+    private static void initAllButtons() {
+        int nameID = 1;
 
-            setStatusByPlayerLetter(currentPlayer);
-            CELLS.forEach(C -> C.setEnabled(false));
+        for (int i = 0, start = BUTTON_ASCII_CODE_START; i < CELLS.length; i++, start++) {
+            for (int y = 0; y < CELLS[i].length; y++) {
+                final int finalI = i;
+                final int finalY = y;
+
+                CELLS[i][y] = new TButton(Character.toString((char) start) + nameID);
+                CELLS[i][y].setText(EMPTY_STRING);
+                CELLS[i][y].setFont(BUTTON_CELL_FONT);
+                CELLS[i][y].addActionListener(event -> checkIfTheGameIsDone(CELLS[finalI][finalY]));
+                CELLS[i][y].addActionListener(event -> displayStatusByState());
+                CELLS[i][y].addActionListener(event -> drawAPlayerLetter(CELLS[finalI][finalY]));
+                BOARD.add(CELLS[i][y]);
+
+                nameID++;
+            }
+            nameID = 1;
+        }
+    }
+
+    /**
+     * Check if the current player have a specific position to win the game.
+     * If it does, all button in the cell are disabled.
+     */
+    private static void checkIfTheGameIsDone(TButton player) {
+        if (IGame.haveAWinner(CELLS, player.getText())) {
+            setStatusByPlayerLetter(player.getText());
+
+            for (var cells : CELLS) {
+                for (var cell : cells) {
+                    cell.setEnabled(false);
+                }
+            }
         }
     }
 
@@ -115,7 +121,7 @@ public class TicTacToe extends JFrame {
         switch (getNumberOfCellPlayed()) {
             case 0 -> LABEL_STATUS.setText(BoardStatus.NO_ACTIVE.getText());
             case 1 -> LABEL_STATUS.setText(BoardStatus.ACTIVE.getText());
-            case (MAX_BOARD_SIZE * MAX_BOARD_SIZE) -> LABEL_STATUS.setText(BoardStatus.NO_WINNER.getText());
+            case (BOARD_SIZE * BOARD_SIZE) -> LABEL_STATUS.setText(BoardStatus.NO_WINNER.getText());
         }
     }
 
@@ -124,19 +130,26 @@ public class TicTacToe extends JFrame {
      * @return the number of no empty cell.
      */
     private static int getNumberOfCellPlayed() {
-        return (int) CELLS.stream()
-                .filter(B -> !B.getText().equals(EMPTY_STRING))
-                .count();
+        int count = 0;
+        for (var cells : CELLS) {
+            for (var cell : cells) {
+                if (!cell.getText().equals(EMPTY_STRING)) count++;
+            }
+        }
+        return count;
     }
 
     /**
      * Reset the game, so the players can make another one.
      */
     private static void resetTheGame() {
-        for (var cell : CELLS) {
-            cell.setText(EMPTY_STRING);
-            cell.setEnabled(true);
+        for (var cells : CELLS) {
+            for (var cell : cells) {
+                cell.setText(EMPTY_STRING);
+                cell.setEnabled(true);
+            }
         }
+
         currentPlayer = PLAYER_1;
         LABEL_STATUS.setText(BoardStatus.NO_ACTIVE.getText());
         JOptionPane.showMessageDialog(null, "The game have been reset!");
