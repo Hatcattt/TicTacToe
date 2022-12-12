@@ -9,7 +9,7 @@ import java.awt.event.WindowEvent;
  */
 public class CheckOnExit extends WindowAdapter {
     private final static String MESSAGE = "Are you sure you want to quit?";
-    private final static String TITLE = "Wait a second..";
+    private final static String TITLE = "Wait a second...";
     private final JFrame jFrame;
 
     /**
