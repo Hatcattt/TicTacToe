@@ -1,18 +1,24 @@
-## The TicTacToe game
+## The TicTacToe game with Java Swing
 
-<p>This Java program is used to play the game of the Tic Tac Toe.</p>
+<p>Do you want to play the Tic Tac Toe game :-) ?</p>
 
-<p>This is a project coming from a course in my JetBrain Academy Study Plan, where the
-goal is to make this game with the Java Swing API.</p>
+[Rules of this game](https://en.wikipedia.org/wiki/Tic-tac-toe)
 
->Here are the basic functionality at the moment.
+--- 
+
+<p>This is a project from a course in my JetBrain Academy study plan, where the
+goal is to realize this game with the Java Swing API.</p>
+<p>This project will be transformed later with more features.</p>
+
+
+> Here are the basic features for the moment.
 > - You can choose a difficulty to have a challenge!
-> - The status of the game is print in real time.
-> - There are a reset button to reset the game (you still have the same difficulty).
+> - The game status is printed in real time.
+> - There is a reset button to reset the game (but you always have the same difficulty).
 
 ### Before the game started
 
-> It asks the player what game level difficulty he wants.
+> It asks the player what level of difficulty they want to play at.
 
 ![levelChoice](src/main/resources/pictures/game_level_choice.PNG)
 
@@ -22,23 +28,27 @@ goal is to make this game with the Java Swing API.</p>
 | **HARD**   |     4     |    **16**     |
 | **INSANE** |     5     |    **25**     |
 
-### Examples
+---
+<p>After that, the game grid is built and the players can start playing.</p>
+
+### Example of rendering
 
 ![levelChoice](src/main/resources/pictures/example.png)
 
 
-### Futures ideas and functionalities
+### Futures ideas or functionalities
 
-> - Have an IA to play with it!
-> - Add a system of scores for a game to make multiple games
-> - Add a top menu bar to have more options offer for players.
->   - Change the GUI for some elements
->   - Change the difficulty of the game dynamically
-> - A reformat of colors and GUI.
+> - Have an AI to play with!
+> - Add a setup window before the game starts.
+> - Add a scoring system.
+> - Add more tests
+> - Add a menu bar at the top to give players more options.
+> - Change the graphical interface for some elements
+
 ### And also
 > - Adding more OOP concepts
-> - Adding automatic test to test completely this program.
+> - Added automatic tests to fully test this program.
 
 ![icon](src/main/resources/icon/levelIcon.png)
 
-<a href="https://www.flaticon.com/free-icons/speedometer" title="speedometer icons">Speedometer icons created by Freepik - Flaticon</a>
+[Icon by FlatIcon](https://www.flaticon.com/free-icons/speedometer)
