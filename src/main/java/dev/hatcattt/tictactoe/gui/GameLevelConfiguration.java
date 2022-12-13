@@ -8,7 +8,7 @@ import javax.swing.*;
  * Popup a window before the game start, to choose the difficulty of the game.
  */
 public class GameLevelConfiguration {
-    private final static GameLevel DEFAULT_LEVEL = GameLevel.NORMAL;
+    public final static GameLevel DEFAULT_LEVEL = GameLevel.NORMAL;
     private final static String ICON_IMAGE_PATH = "src/main/resources/icon/levelIcon.png";
     private static final GameLevel[] GAME_LEVELS = new GameLevel[]{
             GameLevel.NORMAL,
